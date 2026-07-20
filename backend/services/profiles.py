@@ -517,7 +517,7 @@ async def create_voice_prompt_for_profile(
     profile_id: str,
     db: Session,
     use_cache: bool = True,
-    engine: str = "qwen",
+    engine: str = "luxtts",
 ) -> dict:
     """
     Create a voice prompt from a profile.

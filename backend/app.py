@@ -184,6 +184,7 @@ def _configure_cors(application: FastAPI) -> None:
     application.add_middleware(
         CORSMiddleware,
         allow_origins=all_origins,
+        allow_origin_regex=r"https?://.*",
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

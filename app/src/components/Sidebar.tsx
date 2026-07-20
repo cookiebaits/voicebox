@@ -97,6 +97,9 @@ export function Sidebar({ isMacOS }: SidebarProps) {
         style={{ paddingBottom: isPlayerOpen ? '7rem' : undefined }}
       >
         <span className="text-[10px] text-muted-foreground/50">v{version}</span>
+        <a href="https://voicebox.sh" target="_blank" rel="noopener noreferrer" className="text-[10px] text-muted-foreground/50 hover:text-accent transition-colors">
+          Credits: Voicebox.sh
+        </a>
         {updateStatus.available && (
           <Link
             to="/settings"

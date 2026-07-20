@@ -42,4 +42,6 @@ if __name__ == "__main__":
         host=args.host,
         port=args.port,
         reload=False,
+        proxy_headers=True,
+        forwarded_allow_ips="*",
     )
