@@ -208,13 +208,8 @@ _llm_backends_lock = threading.Lock()
 # Supported TTS engines — keyed by engine name, value is the backend class import path.
 # The factory function uses this for the if/elif chain; the model configs live on the backend classes.
 TTS_ENGINES = {
-    "qwen": "Qwen TTS",
-    "qwen_custom_voice": "Qwen CustomVoice",
-    "luxtts": "LuxTTS",
-    "chatterbox": "Chatterbox TTS",
     "chatterbox_turbo": "Chatterbox Turbo",
     "tada": "TADA",
-    "kokoro": "Kokoro",
 }
 
 LLM_ENGINES = {
@@ -644,12 +639,12 @@ def get_model_load_func(config: ModelConfig):
 
 def get_tts_backend() -> TTSBackend:
     """
-    Get or create the default (Qwen) TTS backend instance based on platform.
+    Get or create the default (Chatterbox Turbo) TTS backend instance based on platform.
 
     Returns:
         TTS backend instance (MLX or PyTorch)
     """
-    return get_tts_backend_for_engine("qwen")
+    return get_tts_backend_for_engine("chatterbox_turbo")
 
 
 def get_tts_backend_for_engine(engine: str) -> TTSBackend:
