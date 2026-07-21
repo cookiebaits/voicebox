@@ -94,13 +94,13 @@ RUN mkdir -p /app/data/generations /app/data/profiles /app/data/cache \
     && chown -R voicebox:voicebox /app/data
 
 # Expose the API port
-EXPOSE 17493
+EXPOSE 3000
 
 # Health check — auto-restart if the server hangs
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=60s \
-    CMD curl -f http://localhost:17493/health || exit 1
+    CMD curl -f http://localhost:3000/health || exit 1
 
 # Entrypoint joins GPU groups then drops to the voicebox user
 COPY --chmod=755 scripts/rocm-entrypoint.sh /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "17493", "--proxy-headers", "--forwarded-allow-ips", "*"]
+CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "3000", "--proxy-headers", "--forwarded-allow-ips", "*"]

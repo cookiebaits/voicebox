@@ -9,9 +9,8 @@ services:
     restart: unless-stopped
 
     ports:
-      # Host-side moved to 17600 so the dev/installed Voicebox can keep 17493.
-      # Container still listens on its native port internally.
-      - "127.0.0.1:17600:17493"
+      # Container now listens on port 3000 to be compatible with Dokploy defaults.
+      - "3000:3000"
 
     volumes:
       # Bind-mount for generated audio (customize the host path as needed)
