@@ -8,7 +8,6 @@ tauri/
 landing/
 docs/
 mlx-test/
-scripts/
 
 # Dependencies & build artifacts (rebuilt in Docker)
 node_modules/
