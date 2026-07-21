@@ -347,6 +347,100 @@ async def _run_startup(application: FastAPI) -> None:
     except Exception as e:
         logger.warning("Could not create HuggingFace cache directory: %s", e)
 
+
+
+    # Auto-download models
+    from .utils.tasks import get_task_manager
+    from .backends import get_model_config, get_model_load_func, WHISPER_HF_REPOS
+
+    task_manager = get_task_manager()
+
+    async def auto_download_model(model_name: str, config):
+        if not config:
+            return
+        progress_model_name = config.model_name
+        # avoid redownloading if downloaded already
+        try:
+            load_func = get_model_load_func(config)
+            result = load_func()
+            if asyncio.iscoroutine(result):
+                await result
+            task_manager.complete_download(progress_model_name)
+        except Exception as e:
+            task_manager.error_download(progress_model_name, str(e))
+
+    async def auto_download_whisper(model_size: str):
+        progress_model_name = f"whisper-{model_size}"
+        task_manager.start_download(progress_model_name)
+        try:
+            from .services import transcribe
+            whisper_model = transcribe.get_whisper_model()
+            if not whisper_model._is_model_cached(model_size):
+                await whisper_model.load_model_async(model_size)
+            task_manager.complete_download(progress_model_name)
+        except Exception as e:
+            task_manager.error_download(progress_model_name, str(e))
+
+    def trigger_auto_downloads():
+        from .backends import get_model_config
+        # Trigger Whisper Turbo
+        create_background_task(auto_download_whisper("turbo"))
+
+        # Trigger Chatterbox Turbo
+        create_background_task(auto_download_model("chatterbox-turbo", get_model_config("chatterbox-turbo")))
+
+        # Trigger TADA 1B
+        create_background_task(auto_download_model("tada-1b", get_model_config("tada-1b")))
+
+    trigger_auto_downloads()
+
+
+
+    # Auto-download models
+    from .utils.tasks import get_task_manager
+    from .backends import get_model_config, get_model_load_func, WHISPER_HF_REPOS
+
+    task_manager = get_task_manager()
+
+    async def auto_download_model(model_name: str, config):
+        if not config:
+            return
+        progress_model_name = config.model_name
+        # avoid redownloading if downloaded already
+        try:
+            load_func = get_model_load_func(config)
+            result = load_func()
+            if asyncio.iscoroutine(result):
+                await result
+            task_manager.complete_download(progress_model_name)
+        except Exception as e:
+            task_manager.error_download(progress_model_name, str(e))
+
+    async def auto_download_whisper(model_size: str):
+        progress_model_name = f"whisper-{model_size}"
+        task_manager.start_download(progress_model_name)
+        try:
+            from .services import transcribe
+            whisper_model = transcribe.get_whisper_model()
+            if not whisper_model._is_model_cached(model_size):
+                await whisper_model.load_model_async(model_size)
+            task_manager.complete_download(progress_model_name)
+        except Exception as e:
+            task_manager.error_download(progress_model_name, str(e))
+
+    def trigger_auto_downloads():
+        from .backends import get_model_config
+        # Trigger Whisper Turbo
+        create_background_task(auto_download_whisper("turbo"))
+
+        # Trigger Chatterbox Turbo
+        create_background_task(auto_download_model("chatterbox-turbo", get_model_config("chatterbox-turbo")))
+
+        # Trigger TADA 1B
+        create_background_task(auto_download_model("tada-1b", get_model_config("tada-1b")))
+
+    trigger_auto_downloads()
+
     logger.info("Ready")
 
 

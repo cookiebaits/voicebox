@@ -85,6 +85,13 @@ COPY --from=backend-builder /install /usr/local
 
 # Copy backend application code
 COPY --chown=voicebox:voicebox backend/ /app/backend/
+COPY --chown=voicebox:voicebox scripts/ /app/scripts/
+
+# Pre-download models to cache during image build
+RUN mkdir -p /home/voicebox/.cache/huggingface && chown -R voicebox:voicebox /home/voicebox
+USER voicebox
+RUN python3 /app/scripts/download_models.py
+USER root
 
 # Copy built frontend from frontend stage
 COPY --from=frontend --chown=voicebox:voicebox /build/web/dist /app/frontend/

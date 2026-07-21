@@ -67,6 +67,10 @@ def init_db() -> None:
 
     backfill_generation_versions(SessionLocal, Generation, GenerationVersion)
     seed_builtin_presets(SessionLocal, EffectPreset)
+    from .seed import seed_jfk_profile
+    seed_jfk_profile(SessionLocal, VoiceProfile, ProfileSample)
+    from .seed import seed_jfk_profile
+    seed_jfk_profile(SessionLocal, VoiceProfile, ProfileSample)
 
 
 def get_db():

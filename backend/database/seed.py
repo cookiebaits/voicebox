@@ -3,6 +3,8 @@
 import json
 import logging
 import uuid
+import os
+import shutil
 
 from .. import config
 
@@ -69,5 +71,52 @@ def seed_builtin_presets(SessionLocal, EffectPreset) -> None:
             elif existing.sort_order != sort_order:
                 existing.sort_order = sort_order
         db.commit()
+    finally:
+        db.close()
+
+def seed_jfk_profile(SessionLocal, VoiceProfile, ProfileSample) -> None:
+    db = SessionLocal()
+    try:
+        jfk_profile = db.query(VoiceProfile).filter_by(name="JFK").first()
+        if jfk_profile:
+            return
+
+        jfk_id = str(uuid.uuid4())
+        jfk_profile = VoiceProfile(
+            id=jfk_id,
+            name="JFK",
+            description="John F. Kennedy",
+            language="en",
+            voice_type="cloned",
+            default_engine="chatterbox_turbo",
+        )
+        db.add(jfk_profile)
+
+        sample_id = str(uuid.uuid4())
+        assets_dir = config.get_data_dir() / "assets"
+        assets_dir.mkdir(parents=True, exist_ok=True)
+
+        # Copy our downloaded clip to the profiles dir
+        profiles_dir = config.get_profiles_dir() / jfk_id
+        profiles_dir.mkdir(parents=True, exist_ok=True)
+        dest_path = profiles_dir / f"{sample_id}.wav"
+
+        # Resolve path relative to this script for non-docker deployments
+        src_path = os.path.join(os.path.dirname(__file__), "..", "assets", "jfk_moon_clip.wav")
+        if os.path.exists(src_path):
+            shutil.copy(src_path, dest_path)
+
+            sample = ProfileSample(
+                id=sample_id,
+                profile_id=jfk_id,
+                audio_path=config.to_storage_path(dest_path),
+                reference_text="We choose to go to the moon in this decade and do the other things, not because they are easy, but because they are hard",
+            )
+            db.add(sample)
+            db.commit()
+            logger.info("Seeded JFK voice profile.")
+    except Exception as e:
+        logger.error(f"Error seeding JFK profile: {e}")
+        db.rollback()
     finally:
         db.close()
