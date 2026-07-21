@@ -73,7 +73,7 @@ def test_empty_input_returns_empty():
 
 
 def test_validate_accepts_previously_rejected_hot_file(tmp_path):
-    audio = _tone(3.0, amp=0.995)
+    audio = _tone(5.2, amp=0.995)
     path = tmp_path / "hot.wav"
     sf.write(str(path), audio, SR)
 
