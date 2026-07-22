@@ -115,6 +115,45 @@ def seed_jfk_profile(SessionLocal, VoiceProfile, ProfileSample) -> None:
             db.add(sample)
             db.commit()
             logger.info("Seeded JFK voice profile.")
+
+        profiles_to_seed = [
+            {"name": "Accent Male", "file": "Accent Male.mp3"},
+            {"name": "Angry Female", "file": "Angry Female.mp3"},
+            {"name": "Angry Male", "file": "Angry Male.mp3"}
+        ]
+
+        for p in profiles_to_seed:
+            existing = db.query(VoiceProfile).filter_by(name=p["name"]).first()
+            if not existing:
+                src_path = config.get_data_dir() / "profiles" / p["file"]
+                if src_path.exists():
+                    p_id = str(uuid.uuid4())
+                    profile = VoiceProfile(
+                        id=p_id,
+                        name=p["name"],
+                        description=f"{p['name']} voice sample",
+                        language="en",
+                        voice_type="cloned",
+                        default_engine="chatterbox_turbo",
+                    )
+                    db.add(profile)
+
+                    p_profiles_dir = config.get_profiles_dir() / p_id
+                    p_profiles_dir.mkdir(parents=True, exist_ok=True)
+                    s_id = str(uuid.uuid4())
+                    p_dest_path = p_profiles_dir / f"{s_id}.mp3"
+                    shutil.copy(src_path, p_dest_path)
+
+                    p_sample = ProfileSample(
+                        id=s_id,
+                        profile_id=p_id,
+                        audio_path=config.to_storage_path(p_dest_path),
+                        reference_text=p["name"] + " sample text",
+                    )
+                    db.add(p_sample)
+                    db.commit()
+                    logger.info(f"Seeded {p['name']} voice profile.")
+
     except Exception as e:
         logger.error(f"Error seeding JFK profile: {e}")
         db.rollback()
