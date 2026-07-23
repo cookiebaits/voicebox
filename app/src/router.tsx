@@ -40,11 +40,11 @@ function RootLayout() {
 
   return (
     <AppFrame>
-      <div className="flex flex-1 min-h-0 overflow-hidden">
+      <div className="flex flex-col md:flex-row flex-1 min-h-0 overflow-hidden relative">
         <Sidebar isMacOS={isMacOS()} />
 
-        <main className="flex-1 ml-20 overflow-hidden flex flex-col">
-          <div className="container mx-auto px-8 max-w-[1800px] h-full overflow-hidden flex flex-col">
+        <main className="flex-1 md:ml-20 pb-16 md:pb-0 overflow-hidden flex flex-col w-full">
+          <div className="container mx-auto px-4 md:px-8 max-w-[1800px] h-full overflow-hidden flex flex-col">
             <Outlet />
           </div>
         </main>

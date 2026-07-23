@@ -39,7 +39,7 @@ export function SettingsLayout() {
 
   return (
     <div className="flex flex-col h-full min-h-0">
-      <nav className="flex gap-1 border-b shrink-0">
+      <nav className="flex gap-1 border-b shrink-0 overflow-x-auto whitespace-nowrap">
         {tabs.map((tab) => {
           if (tab.tauriOnly && !platform.metadata.isTauri) return null;
 

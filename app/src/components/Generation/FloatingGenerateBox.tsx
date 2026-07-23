@@ -248,8 +248,10 @@ export function FloatingGenerateBox({
         'fixed',
         isStoriesRoute
           ? // Aligned with StoryContent: sidebar + list width + gap (tab bleeds with -mx-8)
-            'left-[calc(5rem+360px+1.5rem)] right-8'
-          : 'left-[calc(5rem+2rem)] right-8 lg:right-auto lg:w-[calc((100%-5rem-4rem)/2-1rem)]',
+            'left-4 right-4 md:left-[calc(5rem+360px+1.5rem)] md:right-8'
+          : 'left-4 right-4 md:left-[calc(5rem+2rem)] md:right-8 lg:right-auto lg:w-[calc((100%-5rem-4rem)/2-1rem)]',
+        // Lift the box up on mobile to avoid the bottom navigation bar
+        'mb-20 md:mb-0'
       )}
       style={{
         // On stories route: offset by track editor height when visible

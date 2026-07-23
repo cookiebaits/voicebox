@@ -103,30 +103,32 @@ export function VoicesTab() {
   }
 
   return (
-    <div className="h-full flex gap-0 overflow-hidden -mx-8">
+    <div className="h-full flex flex-col md:flex-row gap-0 overflow-hidden -mx-4 md:-mx-8">
       {/* Left: Table */}
       <div className="flex-1 min-w-0 flex flex-col relative overflow-hidden">
         {/* Scroll Mask */}
         <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-background to-transparent z-10 pointer-events-none" />
 
         {/* Fixed Header */}
-        <div className="absolute top-0 left-0 right-0 z-20 pl-8 pr-8">
-          <div className="flex items-center gap-3 mb-6">
+        <div className="absolute top-0 left-0 right-0 z-20 px-4 md:px-8 pt-4 md:pt-0">
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-3 mb-6">
             <h1 className="text-2xl font-bold">{t('voicesTab.title')}</h1>
             <div className="flex-1" />
-            <div className="relative w-[240px]">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-              <Input
-                placeholder={t('voicesTab.searchPlaceholder')}
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="h-10 pl-8 text-sm rounded-full focus-visible:ring-0 focus-visible:ring-offset-0"
-              />
+            <div className="w-full md:w-auto flex gap-2">
+              <div className="relative flex-1 md:w-[240px]">
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                <Input
+                  placeholder={t('voicesTab.searchPlaceholder')}
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="h-10 pl-8 text-sm rounded-full focus-visible:ring-0 focus-visible:ring-offset-0"
+                />
+              </div>
+              <Button onClick={() => setDialogOpen(true)} className="shrink-0">
+                <Plus className="h-4 w-4 md:mr-2" />
+                <span className="hidden md:inline">{t('voicesTab.newVoice')}</span>
+              </Button>
             </div>
-            <Button onClick={() => setDialogOpen(true)}>
-              <Plus className="h-4 w-4 mr-2" />
-              {t('voicesTab.newVoice')}
-            </Button>
           </div>
         </div>
 
@@ -134,20 +136,20 @@ export function VoicesTab() {
         <div
           ref={scrollRef}
           className={cn(
-            'flex-1 overflow-y-auto overflow-x-hidden pt-16 relative z-0',
+            'flex-1 overflow-y-auto overflow-x-hidden pt-28 md:pt-16 relative z-0',
             isPlayerVisible && BOTTOM_SAFE_AREA_PADDING,
           )}
         >
-          <Table className="table-fixed [&_td:first-child]:pl-8 [&_th:first-child]:pl-8">
+          <Table className="table-fixed [&_td:first-child]:pl-4 md:[&_td:first-child]:pl-8 [&_th:first-child]:pl-4 md:[&_th:first-child]:pl-8">
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[30%]">{t('voicesTab.columns.name')}</TableHead>
-                <TableHead className="w-[10%]">{t('voicesTab.columns.language')}</TableHead>
-                <TableHead className="w-[10%]">{t('voicesTab.columns.generations')}</TableHead>
-                <TableHead className="w-[8%]">{t('voicesTab.columns.samples')}</TableHead>
-                <TableHead className="w-[8%]">{t('voicesTab.columns.effects')}</TableHead>
-                <TableHead className="w-[24%]">{t('voicesTab.columns.channels')}</TableHead>
-                <TableHead className="w-6"></TableHead>
+                <TableHead className="w-1/2 md:w-[30%]">{t('voicesTab.columns.name')}</TableHead>
+                <TableHead className="hidden md:table-cell md:w-[10%]">{t('voicesTab.columns.language')}</TableHead>
+                <TableHead className="hidden md:table-cell md:w-[10%]">{t('voicesTab.columns.generations')}</TableHead>
+                <TableHead className="hidden md:table-cell md:w-[8%]">{t('voicesTab.columns.samples')}</TableHead>
+                <TableHead className="hidden md:table-cell md:w-[8%]">{t('voicesTab.columns.effects')}</TableHead>
+                <TableHead className="w-1/2 md:w-[24%]">{t('voicesTab.columns.channels')}</TableHead>
+                <TableHead className="hidden md:table-cell md:w-6"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -169,7 +171,7 @@ export function VoicesTab() {
 
       {/* Right: Inspector */}
       {selectedVoiceId && (
-        <div className="w-[340px] shrink-0 border-l border-t rounded-tl-xl bg-muted/30">
+        <div className="w-full h-1/2 md:w-[340px] md:h-auto shrink-0 border-t md:border-l md:border-t rounded-t-xl md:rounded-tl-xl md:rounded-tr-none bg-muted/30">
           <VoiceInspector key={selectedVoiceId} profileId={selectedVoiceId} />
         </div>
       )}
@@ -231,10 +233,10 @@ function VoiceRow({
           </div>
         </div>
       </TableCell>
-      <TableCell>{profile.language}</TableCell>
-      <TableCell>{profile.generation_count}</TableCell>
-      <TableCell>{profile.sample_count}</TableCell>
-      <TableCell>
+      <TableCell className="hidden md:table-cell">{profile.language}</TableCell>
+      <TableCell className="hidden md:table-cell">{profile.generation_count}</TableCell>
+      <TableCell className="hidden md:table-cell">{profile.sample_count}</TableCell>
+      <TableCell className="hidden md:table-cell">
         {enabledEffects.length > 0 ? (
           <span
             className="inline-flex items-center gap-1 text-xs text-accent"
@@ -259,7 +261,7 @@ function VoiceRow({
           className="w-full"
         />
       </TableCell>
-      <TableCell />
+      <TableCell className="hidden md:table-cell" />
     </TableRow>
   );
 }

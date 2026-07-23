@@ -178,8 +178,7 @@ class HumeTadaBackend:
                 TADA_CODEC_REPO,
                 subfolder="encoder",
                 low_cpu_mem_usage=False,
-                device_map=device,
-            )
+            ).to(device)
             self.encoder.eval()
 
             # Load the causal LM (includes decoder for wav generation).
@@ -197,8 +196,7 @@ class HumeTadaBackend:
                 config=config,
                 torch_dtype=model_dtype,
                 low_cpu_mem_usage=False,
-                device_map=device,
-            )
+            ).to(device)
             self.model.eval()
 
         logger.info(f"HumeAI TADA {model_size} loaded successfully on {device}")

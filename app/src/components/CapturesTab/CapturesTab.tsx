@@ -433,7 +433,7 @@ export function CapturesTab() {
   };
 
   return (
-    <div className="h-full flex gap-0 overflow-hidden -mx-8">
+    <div className="h-full flex flex-col md:flex-row gap-0 overflow-hidden -mx-4 md:-mx-8">
       <input
         ref={uploadInputRef}
         type="file"
@@ -450,7 +450,7 @@ export function CapturesTab() {
       />
 
       {/* Left: capture list */}
-      <div className="w-[340px] shrink-0">
+      <div className="w-full h-1/2 md:h-auto md:w-[340px] shrink-0">
         <ListPane>
           <ListPaneHeader>
             <ListPaneTitleRow>
@@ -537,8 +537,8 @@ export function CapturesTab() {
         <div className="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-background to-transparent z-10 pointer-events-none" />
 
         {/* Top action bar */}
-        <div className="absolute top-0 left-0 right-0 z-20 px-8">
-          <div className="flex items-center gap-3 py-4">
+        <div className="absolute top-0 left-0 right-0 z-20 px-4 md:px-8">
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-3 py-4">
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <span className="w-1.5 h-1.5 rounded-full bg-accent" />
               <span>
@@ -611,7 +611,7 @@ export function CapturesTab() {
         {selected ? (
           <div
             className={cn(
-              'flex-1 overflow-y-auto pt-20 px-8 pb-8',
+              'flex-1 overflow-y-auto pt-28 md:pt-20 px-4 md:px-8 pb-8',
               isPlayerVisible && BOTTOM_SAFE_AREA_PADDING,
             )}
           >

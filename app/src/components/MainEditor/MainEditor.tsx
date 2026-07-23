@@ -83,9 +83,9 @@ export function MainEditor() {
         <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-background to-transparent z-0 pointer-events-none" />
 
         <div className="absolute top-0 left-0 right-0 z-10">
-          <div className="flex items-center justify-between mb-4 px-1">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 px-1 gap-2 sm:gap-0 mt-4 md:mt-0">
             <h2 className="text-2xl font-bold">Voicebox</h2>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Button variant="outline" onClick={handleImportClick}>
                 <Upload className="mr-2 h-4 w-4" />
                 {t('main.importVoice')}

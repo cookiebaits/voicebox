@@ -149,7 +149,7 @@ export function AudioTab() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full min-h-0">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 h-full min-h-0">
         {/* Left Column - Channels */}
         <div
           className={cn(
