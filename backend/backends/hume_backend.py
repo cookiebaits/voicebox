@@ -174,7 +174,12 @@ class HumeTadaBackend:
             from tada.modules.encoder import Encoder
 
             logger.info("Loading TADA encoder...")
-            self.encoder = Encoder.from_pretrained(TADA_CODEC_REPO, subfolder="encoder").to(device)
+            self.encoder = Encoder.from_pretrained(
+                TADA_CODEC_REPO,
+                subfolder="encoder",
+                low_cpu_mem_usage=False,
+                device_map=device,
+            )
             self.encoder.eval()
 
             # Load the causal LM (includes decoder for wav generation).
@@ -187,7 +192,13 @@ class HumeTadaBackend:
             logger.info(f"Loading TADA {model_size} model...")
             config = TadaConfig.from_pretrained(repo)
             config.tokenizer_name = tokenizer_path
-            self.model = TadaForCausalLM.from_pretrained(repo, config=config, torch_dtype=model_dtype).to(device)
+            self.model = TadaForCausalLM.from_pretrained(
+                repo,
+                config=config,
+                torch_dtype=model_dtype,
+                low_cpu_mem_usage=False,
+                device_map=device,
+            )
             self.model.eval()
 
         logger.info(f"HumeAI TADA {model_size} loaded successfully on {device}")
