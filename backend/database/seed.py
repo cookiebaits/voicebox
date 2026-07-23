@@ -125,8 +125,8 @@ def seed_jfk_profile(SessionLocal, VoiceProfile, ProfileSample) -> None:
         for p in profiles_to_seed:
             existing = db.query(VoiceProfile).filter_by(name=p["name"]).first()
             if not existing:
-                src_path = config.get_data_dir() / "profiles" / p["file"]
-                if src_path.exists():
+                src_path = os.path.join(os.path.dirname(__file__), "..", "assets", p["file"])
+                if os.path.exists(src_path):
                     p_id = str(uuid.uuid4())
                     profile = VoiceProfile(
                         id=p_id,
