@@ -209,7 +209,6 @@ _llm_backends_lock = threading.Lock()
 # The factory function uses this for the if/elif chain; the model configs live on the backend classes.
 TTS_ENGINES = {
     "chatterbox_turbo": "Chatterbox Turbo",
-    "tada": "TADA",
 }
 
 LLM_ENGINES = {
@@ -333,24 +332,7 @@ def _get_non_qwen_tts_configs() -> list[ModelConfig]:
             needs_trim=True,
             languages=["en"],
         ),
-        ModelConfig(
-            model_name="tada-1b",
-            display_name="TADA 1B (English)",
-            engine="tada",
-            hf_repo_id="HumeAI/tada-1b",
-            model_size="1B",
-            size_mb=4000,
-            languages=["en"],
-        ),
-        ModelConfig(
-            model_name="tada-3b-ml",
-            display_name="TADA 3B Multilingual",
-            engine="tada",
-            hf_repo_id="HumeAI/tada-3b-ml",
-            model_size="3B",
-            size_mb=8000,
-            languages=["en", "ar", "zh", "de", "es", "fr", "it", "ja", "pl", "pt"],
-        ),
+
         ModelConfig(
             model_name="kokoro",
             display_name="Kokoro 82M",
@@ -467,7 +449,9 @@ def get_all_model_configs() -> list[ModelConfig]:
 
 def get_tts_model_configs() -> list[ModelConfig]:
     """Return only TTS model configs."""
-    return _get_qwen_model_configs() + _get_qwen_custom_voice_configs() + _get_non_qwen_tts_configs()
+    # Only return chatterbox_turbo
+    non_qwen = [cfg for cfg in _get_non_qwen_tts_configs() if cfg.engine == "chatterbox_turbo"]
+    return non_qwen
 
 
 def get_llm_model_configs() -> list[ModelConfig]:

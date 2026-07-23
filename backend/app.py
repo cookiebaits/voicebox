@@ -389,8 +389,7 @@ async def _run_startup(application: FastAPI) -> None:
         # Trigger Chatterbox Turbo
         create_background_task(auto_download_model("chatterbox-turbo", get_model_config("chatterbox-turbo")))
 
-        # Trigger TADA 1B
-        create_background_task(auto_download_model("tada-1b", get_model_config("tada-1b")))
+
 
     trigger_auto_downloads()
 
@@ -436,8 +435,7 @@ async def _run_startup(application: FastAPI) -> None:
         # Trigger Chatterbox Turbo
         create_background_task(auto_download_model("chatterbox-turbo", get_model_config("chatterbox-turbo")))
 
-        # Trigger TADA 1B
-        create_background_task(auto_download_model("tada-1b", get_model_config("tada-1b")))
+
 
     trigger_auto_downloads()
 
