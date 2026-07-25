@@ -117,9 +117,9 @@ def seed_jfk_profile(SessionLocal, VoiceProfile, ProfileSample) -> None:
             logger.info("Seeded JFK voice profile.")
 
         profiles_to_seed = [
-            {"name": "Accent Male", "file": "Accent Male.mp3"},
-            {"name": "Angry Female", "file": "Angry Female.mp3"},
-            {"name": "Angry Male", "file": "Angry Male.mp3"}
+            {"name": "Trump", "file": "TrumpSample.mp3"},
+            {"name": "Obama", "file": "ObamaSample.mp3"},
+            {"name": "Bush", "file": "BushSample.mp3"}
         ]
 
         for p in profiles_to_seed:

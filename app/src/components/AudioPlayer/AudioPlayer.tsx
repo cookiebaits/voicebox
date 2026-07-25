@@ -202,6 +202,13 @@ export function AudioPlayer() {
             setIsPlaying(false);
             const onFinish = usePlayerStore.getState().onFinish;
             if (onFinish) onFinish();
+
+            // Delete sample and generation after one play
+            const state = usePlayerStore.getState();
+            if (state.audioId) {
+              apiClient.deleteProfileSample(state.audioId).catch(() => {});
+              apiClient.deleteGeneration(state.audioId).catch(() => {});
+            }
           }
         });
 

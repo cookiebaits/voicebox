@@ -393,6 +393,9 @@ async def _run_startup(application: FastAPI) -> None:
 
     trigger_auto_downloads()
 
+    from .utils.cleanup import cleanup_stale_audio
+    create_background_task(cleanup_stale_audio())
+
 
     logger.info("Ready")
 

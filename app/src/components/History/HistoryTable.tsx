@@ -214,36 +214,6 @@ export function HistoryTable() {
     }
   };
 
-  const handleDownloadAudio = (generationId: string, text: string) => {
-    exportGenerationAudio.mutate(
-      { generationId, text },
-      {
-        onError: (error) => {
-          toast({
-            title: 'Failed to download audio',
-            description: error.message,
-            variant: 'destructive',
-          });
-        },
-      },
-    );
-  };
-
-  const handleExportPackage = (generationId: string, text: string) => {
-    exportGeneration.mutate(
-      { generationId, text },
-      {
-        onError: (error) => {
-          toast({
-            title: 'Failed to export generation',
-            description: error.message,
-            variant: 'destructive',
-          });
-        },
-      },
-    );
-  };
-
   const handleDeleteClick = (generationId: string, profileName: string) => {
     setGenerationToDelete({ id: generationId, name: profileName });
     setDeleteDialogOpen(true);
@@ -655,20 +625,6 @@ export function HistoryTable() {
                             >
                               <Play className="mr-2 h-4 w-4" />
                               {t('history.actions.play')}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => handleDownloadAudio(gen.id, gen.text)}
-                              disabled={exportGenerationAudio.isPending}
-                            >
-                              <Download className="mr-2 h-4 w-4" />
-                              {t('history.actions.exportAudio')}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => handleExportPackage(gen.id, gen.text)}
-                              disabled={exportGeneration.isPending}
-                            >
-                              <FileArchive className="mr-2 h-4 w-4" />
-                              {t('history.actions.exportPackage')}
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => handleApplyEffects(gen.id)}>
                               <Wand2 className="mr-2 h-4 w-4" />

@@ -332,24 +332,6 @@ export function CapturesTab() {
     });
   };
 
-  const handleExportAudio = async () => {
-    if (!selected) return;
-    try {
-      const dest = await save({
-        defaultPath: `capture_${selected.id.slice(0, 8)}.wav`,
-        filters: [{ name: 'Audio', extensions: ['wav'] }],
-      });
-      if (!dest) return;
-      const res = await fetch(apiClient.getCaptureAudioUrl(selected.id));
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const buf = new Uint8Array(await res.arrayBuffer());
-      await writeFile(dest, buf);
-      exportToastSuccess(dest);
-    } catch (err) {
-      exportToastError(err);
-    }
-  };
-
   const handleExportTranscript = async () => {
     if (!selected) return;
     const text = (selected.transcript_refined || selected.transcript_raw || '').trim();
@@ -798,10 +780,6 @@ export function CapturesTab() {
                     {t('captures.actions.exportDropdownLabel')}
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleExportAudio}>
-                    <FileAudio className="h-3.5 w-3.5 mr-2 text-muted-foreground" />
-                    {t('captures.actions.exportAudio')}
-                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleExportTranscript}>
                     <Captions className="h-3.5 w-3.5 mr-2 text-muted-foreground" />
                     {t('captures.actions.exportTranscript')}
