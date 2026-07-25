@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useMatchRoute } from '@tanstack/react-router';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Dices, Loader2, Sparkles, Wand2 } from 'lucide-react';
@@ -43,7 +43,7 @@ export function FloatingGenerateBox({
   const { data: selectedProfile } = useProfile(selectedProfileId || '');
   const { data: profiles } = useProfiles();
   const [isExpanded, setIsExpanded] = useState(false);
-  const [selectedPresetId, setSelectedPresetId] = useState<string | null>(null);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const matchRoute = useMatchRoute();
@@ -69,10 +69,6 @@ export function FloatingGenerateBox({
   });
 
   // Fetch effect presets for the dropdown
-  const { data: effectPresets } = useQuery({
-    queryKey: ['effectPresets'],
-    queryFn: () => apiClient.listEffectPresets(),
-  });
 
   // Calculate if track editor is visible (on stories route with items)
   const hasTrackEditor = isStoriesRoute && currentStory && currentStory.items.length > 0;
@@ -84,16 +80,6 @@ export function FloatingGenerateBox({
       if (isStoriesRoute && selectedStoryId && generationId) {
         addPendingStoryAdd(generationId, selectedStoryId);
       }
-    },
-    getEffectsChain: () => {
-      if (!selectedPresetId) return undefined;
-      // Profile's own effects chain (no matching preset)
-      if (selectedPresetId === '_profile') {
-        return selectedProfile?.effects_chain ?? undefined;
-      }
-      if (!effectPresets) return undefined;
-      const preset = effectPresets.find((p) => p.id === selectedPresetId);
-      return preset?.effects_chain;
     },
   });
 
@@ -142,7 +128,7 @@ export function FloatingGenerateBox({
     }
   }, [watchedEngine, setSelectedEngine]);
 
-  // Sync generation form language, engine, and effects with selected profile
+  // Sync generation form language, engine with selected profile
   type EngineValue =
     | 'chatterbox_turbo'
     | 'tada';
@@ -158,34 +144,10 @@ export function FloatingGenerateBox({
     } else {
       form.setValue('engine', 'chatterbox_turbo');
     }
-    // Pre-fill effects from profile defaults
-    if (
-      selectedProfile?.effects_chain &&
-      selectedProfile.effects_chain.length > 0 &&
-      effectPresets
-    ) {
-      // Try to match against a known preset
-      const profileChainJson = JSON.stringify(selectedProfile.effects_chain);
-      const matchingPreset = effectPresets.find(
-        (p) => JSON.stringify(p.effects_chain) === profileChainJson,
-      );
-      if (matchingPreset) {
-        setSelectedPresetId(matchingPreset.id);
-      } else {
-        // No matching preset — use special value to pass profile chain directly
-        setSelectedPresetId('_profile');
-      }
-    } else if (
-      selectedProfile &&
-      (!selectedProfile.effects_chain || selectedProfile.effects_chain.length === 0)
-    ) {
-      setSelectedPresetId(null);
-    }
-    // Persona toggle only applies when the profile has a personality prompt.
     if (selectedProfile && !selectedProfile.personality?.trim()) {
       form.setValue('personality', false);
     }
-  }, [selectedProfile, effectPresets, form]);
+  }, [selectedProfile, form]);
 
   // Auto-resize textarea based on content (only when expanded)
   useEffect(() => {
@@ -290,11 +252,11 @@ export function FloatingGenerateBox({
                               onChange={field.onChange}
                               placeholder={
                                 isStoriesRoute && currentStory
-                                  ? t('generation.placeholder.storyWithEffects', {
+                                  ? t('generation.placeholder.story', {
                                       name: currentStory.name,
                                     })
                                   : selectedProfile
-                                    ? t('generation.placeholder.effectsHint')
+                                    ? t('generation.placeholder.story')
                                     : t('generation.placeholder.selectVoice')
                               }
                               className="px-3 py-2 resize-none bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none focus:ring-0 outline-none ring-0 rounded-2xl text-sm w-full"
@@ -524,34 +486,6 @@ export function FloatingGenerateBox({
                     <EngineModelSelector form={form} compact />
                   </FormItem>
 
-                  <FormItem className="flex-1 space-y-0">
-                    <Select
-                      value={selectedPresetId || 'none'}
-                      onValueChange={(value) =>
-                        setSelectedPresetId(value === 'none' ? null : value)
-                      }
-                    >
-                      <SelectTrigger className="h-8 text-xs bg-card border-border rounded-full hover:bg-background/50 transition-all">
-                        <SelectValue placeholder={t('generation.effects.none')} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="none" className="text-xs">
-                          {t('generation.effects.none')}
-                        </SelectItem>
-                        {selectedProfile?.effects_chain &&
-                          selectedProfile.effects_chain.length > 0 && (
-                            <SelectItem value="_profile" className="text-xs">
-                              {t('generation.effects.profileDefault')}
-                            </SelectItem>
-                          )}
-                        {effectPresets?.map((preset) => (
-                          <SelectItem key={preset.id} value={preset.id} className="text-xs">
-                            {preset.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormItem>
                 </div>
               </motion.div>
             </AnimatePresence>
