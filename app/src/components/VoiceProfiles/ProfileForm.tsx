@@ -934,6 +934,9 @@ export function ProfileForm() {
                         </div>
                       ) : (
                         <>
+                          <div className="text-sm font-medium text-destructive mb-2 bg-destructive/10 p-3 rounded-md">
+                            Disclaimer: The site will temporarily store your voice. Once you play it once, all samples will be deleted.
+                          </div>
                           <Tabs
                             className="pt-0"
                             value={sampleMode}
