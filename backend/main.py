@@ -43,5 +43,5 @@ if __name__ == "__main__":
         port=args.port,
         reload=False,
         proxy_headers=True,
-        forwarded_allow_ips="*",
+        forwarded_allow_ips="",
     )
