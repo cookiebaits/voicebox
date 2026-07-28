@@ -8,7 +8,7 @@ tauri/
 landing/
 docs/
 mlx-test/
-scripts/
+# scripts/ is needed for rocm-entrypoint.sh
 
 # Dependencies & build artifacts (rebuilt in Docker)
 node_modules/
