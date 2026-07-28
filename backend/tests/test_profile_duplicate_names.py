@@ -16,9 +16,9 @@ from sqlalchemy.orm import sessionmaker
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from backend.database import Base, VoiceProfile as DBVoiceProfile
-from backend.models import VoiceProfileCreate
-from backend.services.profiles import create_profile, update_profile
+from database import Base, VoiceProfile as DBVoiceProfile
+from models import VoiceProfileCreate
+from profiles import create_profile, update_profile
 
 
 @pytest.fixture

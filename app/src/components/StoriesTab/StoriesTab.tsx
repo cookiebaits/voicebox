@@ -7,16 +7,16 @@ export function StoriesTab() {
   const audioUrl = usePlayerStore((state) => state.audioUrl);
 
   return (
-    <div className="flex flex-col h-full min-h-0 overflow-hidden -mx-4 md:-mx-8">
+    <div className="flex flex-col h-full min-h-0 overflow-hidden -mx-8">
       {/* Main content area */}
-      <div className="flex-1 min-h-0 flex flex-col md:flex-row gap-4 md:gap-6 overflow-hidden relative">
+      <div className="flex-1 min-h-0 flex gap-6 overflow-hidden relative">
         {/* Left Column - Story List */}
-        <div className="flex flex-col min-h-0 overflow-hidden w-full md:max-w-[360px] shrink-0">
+        <div className="flex flex-col min-h-0 overflow-hidden w-full max-w-[360px] shrink-0">
           <StoryList />
         </div>
 
         {/* Right Column - Story Content */}
-        <div className="flex flex-col min-h-0 overflow-hidden flex-1 px-4 md:px-0 md:pr-8">
+        <div className="flex flex-col min-h-0 overflow-hidden flex-1 pr-8">
           <StoryContent />
         </div>
 

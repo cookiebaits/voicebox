@@ -1,7 +1,7 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useMatchRoute } from '@tanstack/react-router';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Dices, Loader2, Sparkles, Wand2 } from 'lucide-react';
+import { Dices, Loader2, SlidersHorizontal, Sparkles, Wand2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
@@ -43,7 +43,8 @@ export function FloatingGenerateBox({
   const { data: selectedProfile } = useProfile(selectedProfileId || '');
   const { data: profiles } = useProfiles();
   const [isExpanded, setIsExpanded] = useState(false);
-
+  const [isInstructExpanded, setIsInstructExpanded] = useState(false);
+  const [selectedPresetId, setSelectedPresetId] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const matchRoute = useMatchRoute();
@@ -69,6 +70,10 @@ export function FloatingGenerateBox({
   });
 
   // Fetch effect presets for the dropdown
+  const { data: effectPresets } = useQuery({
+    queryKey: ['effectPresets'],
+    queryFn: () => apiClient.listEffectPresets(),
+  });
 
   // Calculate if track editor is visible (on stories route with items)
   const hasTrackEditor = isStoriesRoute && currentStory && currentStory.items.length > 0;
@@ -80,6 +85,16 @@ export function FloatingGenerateBox({
       if (isStoriesRoute && selectedStoryId && generationId) {
         addPendingStoryAdd(generationId, selectedStoryId);
       }
+    },
+    getEffectsChain: () => {
+      if (!selectedPresetId) return undefined;
+      // Profile's own effects chain (no matching preset)
+      if (selectedPresetId === '_profile') {
+        return selectedProfile?.effects_chain ?? undefined;
+      }
+      if (!effectPresets) return undefined;
+      const preset = effectPresets.find((p) => p.id === selectedPresetId);
+      return preset?.effects_chain;
     },
   });
 
@@ -128,26 +143,58 @@ export function FloatingGenerateBox({
     }
   }, [watchedEngine, setSelectedEngine]);
 
-  // Sync generation form language, engine with selected profile
+  // Sync generation form language, engine, and effects with selected profile
   type EngineValue =
+    | 'qwen'
+    | 'luxtts'
+    | 'chatterbox'
     | 'chatterbox_turbo'
-    | 'tada';
+    | 'kokoro'
+    | 'qwen_custom_voice';
   useEffect(() => {
     if (selectedProfile?.language) {
       form.setValue('language', selectedProfile.language as LanguageCode);
     }
-    // Auto-switch engine to match the profile, ensuring it's an allowed engine.
+    // Auto-switch engine to match the profile
     const engine = selectedProfile?.default_engine ?? selectedProfile?.preset_engine;
-    const allowedEngines = new Set(['chatterbox_turbo', 'tada']);
-    if (engine && allowedEngines.has(engine)) {
+    if (engine) {
       form.setValue('engine', engine as EngineValue);
-    } else {
-      form.setValue('engine', 'chatterbox_turbo');
+    } else if (selectedProfile && selectedProfile.voice_type !== 'preset') {
+      // Cloned/designed profile with no default — ensure a compatible (non-preset) engine
+      const currentEngine = form.getValues('engine');
+      const presetEngines = new Set(['kokoro', 'qwen_custom_voice']);
+      if (currentEngine && presetEngines.has(currentEngine)) {
+        form.setValue('engine', 'qwen');
+      }
     }
+    // Pre-fill effects from profile defaults
+    if (
+      selectedProfile?.effects_chain &&
+      selectedProfile.effects_chain.length > 0 &&
+      effectPresets
+    ) {
+      // Try to match against a known preset
+      const profileChainJson = JSON.stringify(selectedProfile.effects_chain);
+      const matchingPreset = effectPresets.find(
+        (p) => JSON.stringify(p.effects_chain) === profileChainJson,
+      );
+      if (matchingPreset) {
+        setSelectedPresetId(matchingPreset.id);
+      } else {
+        // No matching preset — use special value to pass profile chain directly
+        setSelectedPresetId('_profile');
+      }
+    } else if (
+      selectedProfile &&
+      (!selectedProfile.effects_chain || selectedProfile.effects_chain.length === 0)
+    ) {
+      setSelectedPresetId(null);
+    }
+    // Persona toggle only applies when the profile has a personality prompt.
     if (selectedProfile && !selectedProfile.personality?.trim()) {
       form.setValue('personality', false);
     }
-  }, [selectedProfile, form]);
+  }, [selectedProfile, effectPresets, form]);
 
   // Auto-resize textarea based on content (only when expanded)
   useEffect(() => {
@@ -210,10 +257,8 @@ export function FloatingGenerateBox({
         'fixed',
         isStoriesRoute
           ? // Aligned with StoryContent: sidebar + list width + gap (tab bleeds with -mx-8)
-            'left-4 right-4 md:left-[calc(5rem+360px+1.5rem)] md:right-8'
-          : 'left-4 right-4 md:left-[calc(5rem+2rem)] md:right-8 lg:right-auto lg:w-[calc((100%-5rem-4rem)/2-1rem)]',
-        // Lift the box up on mobile to avoid the bottom navigation bar
-        'mb-20 md:mb-0'
+            'left-[calc(5rem+360px+1.5rem)] right-8'
+          : 'left-[calc(5rem+2rem)] right-8 lg:right-auto lg:w-[calc((100%-5rem-4rem)/2-1rem)]',
       )}
       style={{
         // On stories route: offset by track editor height when visible
@@ -252,11 +297,11 @@ export function FloatingGenerateBox({
                               onChange={field.onChange}
                               placeholder={
                                 isStoriesRoute && currentStory
-                                  ? t('generation.placeholder.story', {
+                                  ? t('generation.placeholder.storyWithEffects', {
                                       name: currentStory.name,
                                     })
                                   : selectedProfile
-                                    ? t('generation.placeholder.story')
+                                    ? t('generation.placeholder.effectsHint')
                                     : t('generation.placeholder.selectVoice')
                               }
                               className="px-3 py-2 resize-none bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none focus:ring-0 outline-none ring-0 rounded-2xl text-sm w-full"
@@ -390,6 +435,43 @@ export function FloatingGenerateBox({
                   )}
                 </AnimatePresence>
 
+                {/* Instruct toggle — only for Qwen CustomVoice, which actually honors the kwarg */}
+                <AnimatePresence>
+                  {isExpanded && form.watch('engine') === 'qwen_custom_voice' && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <div className="group relative">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setIsInstructExpanded((prev) => !prev)}
+                          className={cn(
+                            'h-10 w-10 rounded-full transition-all duration-200',
+                            isInstructExpanded
+                              ? 'bg-accent text-accent-foreground border border-accent hover:bg-accent/90'
+                              : 'bg-card border border-border hover:bg-background/50',
+                          )}
+                          aria-label={
+                            isInstructExpanded
+                              ? t('generation.instruct.hide')
+                              : t('generation.instruct.show')
+                          }
+                          aria-pressed={isInstructExpanded}
+                        >
+                          <SlidersHorizontal className="h-4 w-4" />
+                        </Button>
+                        <span className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 whitespace-nowrap rounded-md bg-popover px-3 py-1.5 text-xs text-popover-foreground border border-border opacity-0 transition-opacity group-hover:opacity-100 z-[9999]">
+                          {t('generation.instruct.tooltip')}
+                        </span>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
                 <div className="group relative">
                   <Button
@@ -422,6 +504,37 @@ export function FloatingGenerateBox({
               </div>
             </div>
 
+            {/* Additive instruct textarea — shown below main text when toggle is on and engine supports it */}
+            <AnimatePresence>
+              {isInstructExpanded && form.watch('engine') === 'qwen_custom_voice' && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.2, ease: 'easeOut' }}
+                  className="overflow-hidden"
+                >
+                  <FormField
+                    control={form.control}
+                    name="instruct"
+                    render={({ field }) => (
+                      <FormItem className="mt-2">
+                        <FormControl>
+                          <Textarea
+                            {...field}
+                            placeholder={t('generation.instruct.placeholder')}
+                            className="resize-none bg-transparent border border-accent/20 focus-visible:ring-1 focus-visible:ring-accent/40 rounded-2xl text-sm placeholder:text-muted-foreground/60 w-full px-3 py-2"
+                            style={{ minHeight: '60px', maxHeight: '160px' }}
+                            maxLength={500}
+                          />
+                        </FormControl>
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             <AnimatePresence>
               <motion.div
@@ -486,6 +599,34 @@ export function FloatingGenerateBox({
                     <EngineModelSelector form={form} compact />
                   </FormItem>
 
+                  <FormItem className="flex-1 space-y-0">
+                    <Select
+                      value={selectedPresetId || 'none'}
+                      onValueChange={(value) =>
+                        setSelectedPresetId(value === 'none' ? null : value)
+                      }
+                    >
+                      <SelectTrigger className="h-8 text-xs bg-card border-border rounded-full hover:bg-background/50 transition-all">
+                        <SelectValue placeholder={t('generation.effects.none')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none" className="text-xs">
+                          {t('generation.effects.none')}
+                        </SelectItem>
+                        {selectedProfile?.effects_chain &&
+                          selectedProfile.effects_chain.length > 0 && (
+                            <SelectItem value="_profile" className="text-xs">
+                              {t('generation.effects.profileDefault')}
+                            </SelectItem>
+                          )}
+                        {effectPresets?.map((preset) => (
+                          <SelectItem key={preset.id} value={preset.id} className="text-xs">
+                            {preset.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
                 </div>
               </motion.div>
             </AnimatePresence>

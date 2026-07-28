@@ -7,6 +7,7 @@ import {
 } from '@tanstack/react-router';
 import { AppFrame } from '@/components/AppFrame/AppFrame';
 import { CapturesTab } from '@/components/CapturesTab/CapturesTab';
+import { EffectsTab } from '@/components/EffectsTab/EffectsTab';
 import { MainEditor } from '@/components/MainEditor/MainEditor';
 import { ModelsTab } from '@/components/ModelsTab/ModelsTab';
 import { AboutPage } from '@/components/ServerTab/AboutPage';
@@ -39,11 +40,11 @@ function RootLayout() {
 
   return (
     <AppFrame>
-      <div className="flex flex-col md:flex-row flex-1 min-h-0 overflow-hidden relative">
+      <div className="flex flex-1 min-h-0 overflow-hidden">
         <Sidebar isMacOS={isMacOS()} />
 
-        <main className="flex-1 md:ml-20 pb-16 md:pb-0 overflow-hidden flex flex-col w-full">
-          <div className="container mx-auto px-4 md:px-8 max-w-[1800px] h-full overflow-hidden flex flex-col">
+        <main className="flex-1 ml-20 overflow-hidden flex flex-col">
+          <div className="container mx-auto px-8 max-w-[1800px] h-full overflow-hidden flex flex-col">
             <Outlet />
           </div>
         </main>
@@ -119,6 +120,12 @@ const capturesRoute = createRoute({
   component: CapturesTab,
 });
 
+// Effects route
+const effectsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/effects',
+  component: EffectsTab,
+});
 
 // Models route
 const modelsRoute = createRoute({
@@ -198,6 +205,7 @@ const routeTree = rootRoute.addChildren([
   storiesRoute,
   capturesRoute,
   voicesRoute,
+  effectsRoute,
   modelsRoute,
   settingsRoute.addChildren([
     settingsGeneralRoute,
