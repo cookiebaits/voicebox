@@ -64,9 +64,14 @@ RUN if [ "$PYTORCH_VARIANT" = "rocm" ]; then \
 
 RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
 RUN pip install --no-cache-dir --prefix=/install --no-deps chatterbox-tts
-RUN pip install --no-cache-dir --prefix=/install --no-deps hume-tada
 RUN pip install --no-cache-dir --prefix=/install \
     git+https://github.com/QwenLM/Qwen3-TTS.git
+
+
+# Copy backend so cache_models.py can import model configs
+COPY backend/ /build/backend/
+COPY scripts/cache_models.py /build/cache_models.py
+RUN mkdir -p /root/.cache/huggingface && PYTHONPATH=/install/lib/python3.11/site-packages python /build/cache_models.py
 
 
 # === Stage 3: Runtime ===
@@ -93,6 +98,9 @@ COPY --chown=voicebox:voicebox backend/ /app/backend/
 
 # Copy built frontend from frontend stage
 COPY --from=frontend --chown=voicebox:voicebox /build/web/dist /app/frontend/
+
+# Copy HuggingFace model cache from builder stage
+COPY --from=backend-builder --chown=voicebox:voicebox /root/.cache/huggingface /home/voicebox/.cache/huggingface
 
 # Create data directories owned by non-root user
 RUN mkdir -p /app/data/generations /app/data/profiles /app/data/cache \

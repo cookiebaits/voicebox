@@ -338,24 +338,6 @@ def _get_non_qwen_tts_configs() -> list[ModelConfig]:
             languages=["en"],
         ),
         ModelConfig(
-            model_name="tada-1b",
-            display_name="TADA 1B (English)",
-            engine="tada",
-            hf_repo_id="HumeAI/tada-1b",
-            model_size="1B",
-            size_mb=4000,
-            languages=["en"],
-        ),
-        ModelConfig(
-            model_name="tada-3b-ml",
-            display_name="TADA 3B Multilingual",
-            engine="tada",
-            hf_repo_id="HumeAI/tada-3b-ml",
-            model_size="3B",
-            size_mb=8000,
-            languages=["en", "ar", "zh", "de", "es", "fr", "it", "ja", "pl", "pt"],
-        ),
-        ModelConfig(
             model_name="kokoro",
             display_name="Kokoro 82M",
             engine="kokoro",
@@ -514,20 +496,44 @@ async def load_engine_model(engine: str, model_size: str = "default") -> None:
     backend = get_tts_backend_for_engine(engine)
     if engine in ("qwen", "qwen_custom_voice"):
         await backend.load_model_async(model_size)
-        elif engine == "kokoro":
-            from .kokoro_backend import KokoroTTSBackend
+    else:
+        await backend.load_model_async()
 
-            backend = KokoroTTSBackend()
-        elif engine == "qwen_custom_voice":
-            from .qwen_custom_voice_backend import QwenCustomVoiceBackend
 
-            backend = QwenCustomVoiceBackend()
+
+def get_tts_backend_for_engine(engine: str) -> TTSBackend:
+    global _tts_backends
+    if engine in _tts_backends:
+        return _tts_backends[engine]
+
+    if engine == "qwen":
+        backend_type = get_backend_type()
+        if backend_type == "mlx":
+            from .mlx_backend import MLXTTSBackend
+            backend = MLXTTSBackend()
         else:
-            raise ValueError(f"Unknown TTS engine: {engine}. Supported: {list(TTS_ENGINES.keys())}")
+            from .pytorch_backend import PyTorchTTSBackend
+            backend = PyTorchTTSBackend()
+    elif engine == "luxtts":
+        from .luxtts_backend import LuxTTSBackend
+        backend = LuxTTSBackend()
+    elif engine == "chatterbox":
+        from .chatterbox_backend import ChatterboxTTSBackend
+        backend = ChatterboxTTSBackend()
+    elif engine == "chatterbox_turbo":
+        from .chatterbox_turbo_backend import ChatterboxTurboTTSBackend
+        backend = ChatterboxTurboTTSBackend()
+    elif engine == "kokoro":
+        from .kokoro_backend import KokoroTTSBackend
+        backend = KokoroTTSBackend()
+    elif engine == "qwen_custom_voice":
+        from .qwen_custom_voice_backend import QwenCustomVoiceBackend
+        backend = QwenCustomVoiceBackend()
+    else:
+        raise ValueError(f"Unknown TTS engine: {engine}")
 
-        _tts_backends[engine] = backend
-        return backend
-
+    _tts_backends[engine] = backend
+    return backend
 
 def get_stt_backend() -> STTBackend:
     """
