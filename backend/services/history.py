@@ -63,7 +63,7 @@ async def create_generation(
     instruct: Optional[str] = None,
     generation_id: Optional[str] = None,
     status: str = "completed",
-    engine: Optional[str] = "luxtts",
+    engine: Optional[str] = "qwen",
     model_size: Optional[str] = None,
     source: str = "manual",
 ) -> GenerationResponse:
@@ -219,7 +219,7 @@ async def list_generations(
             duration=generation.duration,
             seed=generation.seed,
             instruct=generation.instruct,
-            engine=generation.engine or "luxtts",
+            engine=generation.engine or "qwen",
             model_size=generation.model_size,
             status=generation.status or "completed",
             error=generation.error,

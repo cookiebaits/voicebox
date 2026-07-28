@@ -1,5 +1,5 @@
 import { Link, useMatchRoute } from '@tanstack/react-router';
-import { AudioLines, Box, Captions, type LucideIcon, Mic, Settings, Volume2, } from 'lucide-react';
+import { AudioLines, Box, Captions, type LucideIcon, Mic, Settings, Volume2, Wand2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import voiceboxLogo from '@/assets/voicebox-logo.png';
@@ -24,6 +24,7 @@ const tabs: Array<{
   { id: 'stories', path: '/stories', icon: AudioLines, labelKey: 'nav.stories' },
   { id: 'captures', path: '/captures', icon: Captions, labelKey: 'nav.captures' },
   { id: 'voices', path: '/voices', icon: Mic, labelKey: 'nav.voices' },
+  { id: 'effects', path: '/effects', icon: Wand2, labelKey: 'nav.effects' },
   { id: 'models', path: '/models', icon: Box, labelKey: 'nav.models' },
   { id: 'settings', path: '/settings', icon: Settings, labelKey: 'nav.settings' },
 ];
@@ -40,17 +41,17 @@ export function Sidebar({ isMacOS }: SidebarProps) {
   return (
     <div
       className={cn(
-        'fixed bottom-0 left-0 w-full h-16 md:top-0 md:h-full md:w-20 bg-sidebar border-t md:border-t-0 md:border-r border-border flex flex-row md:flex-col items-center justify-around md:justify-start py-2 md:py-6 md:gap-6 z-50',
-        isMacOS && 'md:pt-14',
+        'fixed left-0 top-0 h-full w-20 bg-sidebar border-r border-border flex flex-col items-center py-6 gap-6',
+        isMacOS && 'pt-14',
       )}
     >
       {/* Logo */}
-      <div className="hidden md:block mb-2">
+      <div className="mb-2">
         <img src={voiceboxLogo} alt="Voicebox" className="sidebar-logo w-12 h-12 object-contain" />
       </div>
 
       {/* Navigation Buttons */}
-      <div className="flex flex-row md:flex-col gap-1 md:gap-3 w-full md:w-auto justify-around md:justify-start px-2 md:px-0">
+      <div className="flex flex-col gap-3">
         {tabs.map((tab, index) => {
           const Icon = tab.icon;
           const isActive =
@@ -66,7 +67,7 @@ export function Sidebar({ isMacOS }: SidebarProps) {
               key={tab.id}
               to={tab.path}
               className={cn(
-                'relative w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center transition-all duration-200 overflow-hidden shrink-0',
+                'relative w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 overflow-hidden',
                 isActive
                   ? 'bg-white/[0.07] text-foreground shadow-lg backdrop-blur-sm border border-white/[0.08]'
                   : 'text-muted-foreground hover:bg-muted/50',
@@ -92,13 +93,10 @@ export function Sidebar({ isMacOS }: SidebarProps) {
 
       {/* Version */}
       <div
-        className="hidden md:flex mt-auto flex-col items-center gap-1.5 transition-all duration-300"
+        className="mt-auto flex flex-col items-center gap-1.5 transition-all duration-300"
         style={{ paddingBottom: isPlayerOpen ? '7rem' : undefined }}
       >
         <span className="text-[10px] text-muted-foreground/50">v{version}</span>
-        <a href="https://voicebox.sh" target="_blank" rel="noopener noreferrer" className="text-[10px] text-muted-foreground/50 hover:text-accent transition-colors">
-          Credits: Voicebox.sh
-        </a>
         {updateStatus.available && (
           <Link
             to="/settings"

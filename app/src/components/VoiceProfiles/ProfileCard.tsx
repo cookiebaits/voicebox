@@ -66,6 +66,11 @@ export function ProfileCard({ profile, disabled }: ProfileCardProps) {
     setDeleteDialogOpen(false);
   };
 
+  const handleExport = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    exportProfile.mutate(profile.id);
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     const target = e.target as HTMLElement;
     if (target.closest('button')) return;
@@ -126,6 +131,12 @@ export function ProfileCard({ profile, disabled }: ProfileCardProps) {
             )}
           </div>
           <div className="flex gap-0.5 justify-end items-end mt-auto">
+            <CircleButton
+              icon={Download}
+              onClick={handleExport}
+              disabled={exportProfile.isPending}
+              aria-label={t('profiles.card.export')}
+            />
             <CircleButton
               icon={Edit}
               onClick={(e) => {

@@ -400,38 +400,29 @@ class ApiClient {
     language?: LanguageCode,
     model?: WhisperModelSize,
   ): Promise<TranscriptionResponse> {
-    const url = `${this.getBaseUrl()}/transcribe`;
-
-    while (true) {
-      const formData = new FormData();
-      formData.append('file', file);
-      if (language) {
-        formData.append('language', language);
-      }
-      if (model) {
-        formData.append('model', model);
-      }
-
-      const response = await fetch(url, {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (response.status === 202) {
-        // Model is downloading. Wait a bit and retry.
-        await new Promise((resolve) => setTimeout(resolve, 3000));
-        continue;
-      }
-
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({
-          detail: response.statusText,
-        }));
-        throw new Error(formatErrorDetail(error.detail, `HTTP error! status: ${response.status}`));
-      }
-
-      return response.json();
+    const formData = new FormData();
+    formData.append('file', file);
+    if (language) {
+      formData.append('language', language);
     }
+    if (model) {
+      formData.append('model', model);
+    }
+
+    const url = `${this.getBaseUrl()}/transcribe`;
+    const response = await fetch(url, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({
+        detail: response.statusText,
+      }));
+      throw new Error(formatErrorDetail(error.detail, `HTTP error! status: ${response.status}`));
+    }
+
+    return response.json();
   }
 
   // Captures

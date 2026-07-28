@@ -213,6 +213,26 @@ export function StoryContent() {
     );
   };
 
+  const handleExportAudio = () => {
+    if (!story) return;
+
+    exportAudio.mutate(
+      {
+        storyId: story.id,
+        storyName: story.name,
+      },
+      {
+        onError: (error) => {
+          toast({
+            title: t('storyContent.toast.exportFailed'),
+            description: error.message,
+            variant: 'destructive',
+          });
+        },
+      },
+    );
+  };
+
   const handleImportAudio = async (file: File) => {
     if (!story) return;
     setIsImporting(true);
@@ -425,6 +445,17 @@ export function StoryContent() {
               </div>
             </PopoverContent>
           </Popover>
+          {story.items.length > 0 && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExportAudio}
+              disabled={exportAudio.isPending}
+            >
+              <Download className="mr-2 h-4 w-4" />
+              {t('storyContent.exportAudio')}
+            </Button>
+          )}
         </div>
       </div>
 

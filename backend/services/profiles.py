@@ -24,7 +24,7 @@ from ..utils.images import process_avatar, validate_image
 
 logger = logging.getLogger(__name__)
 
-CLONING_ENGINES = {"chatterbox_turbo"}
+CLONING_ENGINES = {"qwen", "luxtts", "chatterbox", "chatterbox_turbo"}
 
 
 def _profile_to_response(
@@ -517,7 +517,7 @@ async def create_voice_prompt_for_profile(
     profile_id: str,
     db: Session,
     use_cache: bool = True,
-    engine: str = "luxtts",
+    engine: str = "qwen",
 ) -> dict:
     """
     Create a voice prompt from a profile.

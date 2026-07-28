@@ -261,7 +261,7 @@ def preprocess_reference_audio(
 
 def validate_reference_audio(
     audio_path: str,
-    min_duration: float = 5.1,
+    min_duration: float = 2.0,
     max_duration: float = 30.0,
     min_rms: float = 0.01,
 ) -> Tuple[bool, Optional[str]]:
@@ -285,7 +285,7 @@ def validate_reference_audio(
 
 def validate_and_load_reference_audio(
     audio_path: str,
-    min_duration: float = 5.1,
+    min_duration: float = 2.0,
     max_duration: float = 30.0,
     min_rms: float = 0.01,
 ) -> Tuple[bool, Optional[str], Optional[np.ndarray], Optional[int]]:

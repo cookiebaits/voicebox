@@ -72,7 +72,7 @@ Voicebox is a **local-first AI voice studio** — a free and open-source alterna
 The two cloud incumbents sit on opposite halves of the voice I/O loop — ElevenLabs on output, WisprFlow on input. Voicebox does both, bridges them with a bundled local LLM for refinement and per-profile personas, and runs the whole thing on your machine.
 
 - **Complete privacy** — models, voice data, and captures never leave your machine
-- **7 TTS engines** — Qwen3-TTS, Qwen CustomVoice, LuxTTS, Chatterbox Multilingual, Chatterbox Turbo, HumeAI TADA, and Kokoro
+- **7 TTS engines** — Qwen3-TTS, Qwen CustomVoice, LuxTTS, Chatterbox Multilingual, Chatterbox Turbo, and Kokoro
 - **Voice cloning and preset voices** — zero-shot cloning from a reference sample, or 50+ curated preset voices via Kokoro and Qwen CustomVoice
 - **23 languages** — from English to Arabic, Japanese, Hindi, Swahili, and more
 - **Post-processing effects** — pitch shift, reverb, delay, chorus, compression, and filters
@@ -118,13 +118,12 @@ Seven TTS engines with different strengths, switchable per-generation:
 | **LuxTTS**                  | English   | Lightweight (~1GB VRAM), 48kHz output, 150x realtime on CPU                                                                              |
 | **Chatterbox Multilingual** | 23        | Broadest language coverage — Arabic, Danish, Finnish, Greek, Hebrew, Hindi, Malay, Norwegian, Polish, Swahili, Swedish, Turkish and more |
 | **Chatterbox Turbo**        | English   | Fast 350M model with paralinguistic emotion/sound tags                                                                                   |
-| **TADA** (1B / 3B)          | 10        | HumeAI speech-language model — 700s+ coherent audio, text-acoustic dual alignment                                                        |
 | **Kokoro**                  | 8         | 50 curated preset voices, tiny 82M model, fast CPU inference                                                                             |
 
 ### Emotions & Paralinguistic Tags
 
 Only **Chatterbox Turbo** interprets paralinguistic tags like `[laugh]` and
-`[sigh]`. Qwen3-TTS, LuxTTS, Chatterbox Multilingual, and HumeAI TADA read them
+`[sigh]`. Qwen3-TTS, LuxTTS, Chatterbox Multilingual read them
 literally as text.
 
 With **Chatterbox Turbo** selected, type `/` in the text input to open the tag
@@ -369,7 +368,7 @@ Full API documentation available at `http://127.0.0.1:17493/docs`.
 | Frontend      | React, TypeScript, Tailwind CSS                                                 |
 | State         | Zustand, React Query                                                            |
 | Backend       | FastAPI (Python)                                                                |
-| TTS Engines   | Qwen3-TTS, Qwen CustomVoice, LuxTTS, Chatterbox, Chatterbox Turbo, TADA, Kokoro |
+| TTS Engines   | Qwen3-TTS, Qwen CustomVoice, LuxTTS, Chatterbox, Chatterbox Turbo,  Kokoro |
 | STT           | Whisper / Whisper Turbo (PyTorch or MLX)                                        |
 | Local LLM     | Qwen3 (0.6B / 1.7B / 4B), shared runtime with TTS / STT                         |
 | MCP Server    | FastMCP mounted at `/mcp` (Streamable HTTP) + bundled stdio shim binary         |

@@ -70,10 +70,15 @@ export interface GenerationRequest {
   text: string;
   language: LanguageCode;
   seed?: number;
-  model_size?: '1B';
+  model_size?: '1.7B' | '0.6B' | '1B' | '3B';
   engine?:
+    | 'qwen'
+    | 'qwen_custom_voice'
+    | 'luxtts'
+    | 'chatterbox'
     | 'chatterbox_turbo'
-    | 'tada';
+
+    | 'kokoro';
   instruct?: string;
   /** When true and the profile has a personality prompt, input text is rewritten in-character before TTS. */
   personality?: boolean;

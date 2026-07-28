@@ -67,7 +67,7 @@ export const ENGINE_LANGUAGES: Record<string, readonly LanguageCode[]> = {
     'zh',
   ],
   chatterbox_turbo: ['en'],
-  tada: ['en', 'ar', 'zh', 'de', 'es', 'fr', 'it', 'ja', 'pl', 'pt'],
+
   kokoro: ['en', 'es', 'fr', 'hi', 'it', 'pt', 'ja', 'zh'],
   qwen_custom_voice: ['zh', 'en', 'ja', 'ko', 'de', 'fr', 'ru', 'pt', 'es', 'it'],
 } as const;

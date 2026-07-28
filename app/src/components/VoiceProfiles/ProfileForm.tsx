@@ -61,10 +61,14 @@ import { AudioSampleUpload } from './AudioSampleUpload';
 import { SampleList } from './SampleList';
 
 const MAX_AUDIO_DURATION_SECONDS = 30;
-const PRESET_ONLY_ENGINES = new Set<string>();
+const PRESET_ONLY_ENGINES = new Set(['kokoro', 'qwen_custom_voice']);
 const DEFAULT_ENGINE_OPTIONS = [
+  { value: 'qwen', label: 'Qwen3-TTS' },
+  { value: 'qwen_custom_voice', label: 'Qwen CustomVoice' },
+  { value: 'luxtts', label: 'LuxTTS' },
+  { value: 'chatterbox', label: 'Chatterbox' },
   { value: 'chatterbox_turbo', label: 'Chatterbox Turbo' },
-  { value: 'tada', label: 'TADA' },
+  { value: 'kokoro', label: 'Kokoro 82M' },
 ] as const;
 
 function makeProfileSchema(t: (key: string) => string) {
@@ -934,9 +938,6 @@ export function ProfileForm() {
                         </div>
                       ) : (
                         <>
-                          <div className="text-sm font-medium text-destructive mb-2 bg-destructive/10 p-3 rounded-md">
-                            Disclaimer: The site will temporarily store your voice. Once you play it once, all samples will be deleted.
-                          </div>
                           <Tabs
                             className="pt-0"
                             value={sampleMode}
