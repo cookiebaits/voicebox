@@ -68,7 +68,6 @@ const DEFAULT_ENGINE_OPTIONS = [
   { value: 'luxtts', label: 'LuxTTS' },
   { value: 'chatterbox', label: 'Chatterbox' },
   { value: 'chatterbox_turbo', label: 'Chatterbox Turbo' },
-  { value: 'tada', label: 'TADA' },
   { value: 'kokoro', label: 'Kokoro 82M' },
 ] as const;
 

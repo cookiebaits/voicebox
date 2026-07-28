@@ -17,8 +17,6 @@ Derived from `backend/backends/__init__.py:185-316`. Each row maps to one `POST 
 | 5 | `luxtts`              | —          | cloned       | English only |
 | 6 | `chatterbox`          | —          | cloned       | |
 | 7 | `chatterbox_turbo`    | —          | cloned       | English only |
-| 8 | `tada`                | `1B`       | cloned       | tada-1b, English only |
-| 9 | `tada`                | `3B`       | cloned       | tada-3b-ml, multilingual |
 | 10| `kokoro`              | —          | preset       | `preset_voice_id="af_heart"` |
 
 Cloned engines (1, 2, 5, 6, 7, 8, 9) share **one** profile created once with the reference WAV. Preset profiles are created separately, one for kokoro and one for qwen_custom_voice.
@@ -125,7 +123,6 @@ Check `GET /models/status` for the target model **before** generation:
 | Cached? | Per-model timeout | Rationale |
 |---------|-------------------|-----------|
 | Yes     | **3 minutes**     | Inference only; generous for CPU builds |
-| No      | **20 minutes**    | First-run HF download up to 8 GB (tada-3b-ml) |
 
 On timeout: cancel the SSE stream, mark the row `timeout`, and continue to the next row. Don't abort the whole run on one timeout.
 

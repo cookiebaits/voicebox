@@ -59,8 +59,6 @@ MATRIX: list[MatrixRow] = [
     MatrixRow("luxtts",                 "luxtts",            None,   "cloned",          "luxtts"),
     MatrixRow("chatterbox",             "chatterbox",        None,   "cloned",          "chatterbox-tts"),
     MatrixRow("chatterbox_turbo",       "chatterbox_turbo",  None,   "cloned",          "chatterbox-turbo"),
-    MatrixRow("tada 1B",                "tada",              "1B",   "cloned",          "tada-1b"),
-    MatrixRow("tada 3B",                "tada",              "3B",   "cloned",          "tada-3b-ml"),
     MatrixRow("kokoro",                 "kokoro",            None,   "preset_kokoro",   "kokoro"),
 ]
 
