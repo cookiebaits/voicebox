@@ -13,6 +13,8 @@ ARG PYTORCH_VARIANT=cpu
 # === Stage 1: Build frontend ===
 FROM oven/bun:1 AS frontend
 
+ENV MAX_JOBS=1
+
 WORKDIR /build
 
 # Copy workspace config and frontend source
@@ -30,6 +32,9 @@ RUN cd web && bunx --bun vite build
 
 # === Stage 2: Build Python dependencies ===
 FROM python:3.11-slim AS backend-builder
+
+ENV MAX_JOBS=1
+ENV MAKEFLAGS="-j1"
 
 # Re-declare ARG inside the stage (Docker scoping requirement).
 ARG PYTORCH_VARIANT=cpu
