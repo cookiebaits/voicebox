@@ -33,12 +33,6 @@ s3tokenizer
 spacy-pkuseg
 pyloudnorm
 
-# HumeAI TADA sub-dependencies (hume-tada itself is installed
-# --no-deps in the setup script because it pins torch>=2.7,<2.8.
-# descript-audio-codec is NOT installed — it pulls onnx/tensorboard
-# via descript-audiotools.  A lightweight shim in utils/dac_shim.py
-# provides the only class TADA uses: Snake1d.)
-torchaudio
 
 # Kokoro TTS (lightweight 82M-param engine)
 kokoro>=0.9.4
