@@ -235,12 +235,6 @@ def build_server(cuda=False, rocm=False):
                         # DAC shim — provides dac.nn.layers.Snake1d without the real
             # descript-audio-codec package (which pulls onnx/tensorboard via
             # descript-audiotools). The shim is in backend/utils/dac_shim.py.
-            "--hidden-import",
-            "backend.utils.dac_shim",
-            "--hidden-import",
-            "torchaudio",
-            "--collect-submodules",
-            "tada",
             # Kokoro 82M — lightweight TTS engine using misaki G2P
             # collect-all is required because transformers introspects .py source
             # files at runtime (e.g. _can_set_attn_implementation opens the class

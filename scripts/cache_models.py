@@ -23,9 +23,6 @@ logger = logging.getLogger(__name__)
 def cache_models():
     configs = get_all_model_configs()
     for config in configs:
-        if config.engine == 'tada':
-            continue
-
         logger.info(f"Downloading model {config.model_name} from {config.hf_repo_id}")
         try:
             snapshot_download(

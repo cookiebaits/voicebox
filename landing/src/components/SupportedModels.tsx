@@ -85,17 +85,6 @@ const MODEL_GROUPS: ModelGroup[] = [
         ],
       },
       {
-        name: 'TADA',
-        author: 'Hume AI',
-        sizes: ['3B', '1B'],
-        description:
-          'Speech-language model with text-acoustic dual alignment. Built for long-form — 700s+ coherent audio without drift. Multilingual at 3B.',
-        tags: [
-          { icon: Globe, label: '10 langs' },
-          { icon: MessageSquare, label: 'Long-form' },
-        ],
-      },
-      {
         name: 'Kokoro',
         author: 'hexgrad · Apache 2.0',
         sizes: ['82M'],
